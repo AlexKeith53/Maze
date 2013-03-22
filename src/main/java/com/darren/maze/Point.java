@@ -48,6 +48,26 @@ public class Point {
         return true;
     }
 
+    public Point multiply(int variable) {
+        return new Point(x * variable, y * variable);
+    }
+
+    public Point incrementXY() {
+        return new Point(x+1, y+1);
+    }
+
+    public Point incrementXY(int variable) {
+        return new Point(x+variable, y+variable);
+    }
+
+    public int horizontalDistance(Point point) {
+        return Math.abs(point.x - x);
+    }
+
+    public int verticalDistance(Point point) {
+        return Math.abs(point.y - y);
+    }
+
     @Override
     public int hashCode() {
         int result = x;

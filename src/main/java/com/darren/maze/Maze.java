@@ -1,5 +1,7 @@
 package com.darren.maze;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,16 +23,28 @@ public class Maze {
         initialize(width, height);
     }
 
-    private void initialize(int width, int height) {
-        checkArgument(width > 0, "Width needs to be greater than 0");
-        checkArgument(height > 0, "Height needs to be greater than 0");
-        this.area = new Area[width][height];
-        for(int i = 0; i < width; i++) {
-            for(int j = 0; j < height; j++) {
-                area[i][j] = Area.WALL;
+    public List<Point> solve() {
+        return solve(new MazeVisitor() {
+            public void enterPath(Point point) {
+                //Do Nothing
             }
-        }
+
+            public void exitPath(Point point) {
+                //Do Nothing
+            }
+        });
     }
+
+    public List<Point> solve(MazeVisitor visitor) {
+        checkState(getStatus().isValid(),"Maze is not valid. Please check getStatus()");
+        Stack<Point> path = new Stack<Point>();
+        solve(visitor, path, entrance());
+        if(path.isEmpty() || !path.peek().equals(exit())) {
+            throw new IllegalStateException("Maze does not have an exist");
+        }
+        return Arrays.asList(path.toArray(new Point[path.size()]));
+    }
+
 
     public void makeRectanglePath(Point startPoint, Point endPoint) {
         makeRectangle(startPoint, endPoint, Area.PATH);
@@ -56,11 +70,6 @@ public class Maze {
         return area[0].length;
     }
 
-    Area getArea(int x, int y) {
-        return area[x][y];
-    }
-
-
     public MazeStatus getStatus() {
         int entrance = getPathsInRow(0).size();
         int exists = getPathsInRow(area[0].length -1).size();
@@ -68,6 +77,22 @@ public class Maze {
             return new MazeStatus(false,"A maze must consists of only one entrance and one exist");
         }
         return new MazeStatus(true, "");
+    }
+
+    @VisibleForTesting
+    public Area getArea(int x, int y) {
+        return area[x][y];
+    }
+
+    private void initialize(int width, int height) {
+        checkArgument(width > 0, "Width needs to be greater than 0");
+        checkArgument(height > 0, "Height needs to be greater than 0");
+        this.area = new Area[width][height];
+        for(int i = 0; i < width; i++) {
+            for(int j = 0; j < height; j++) {
+                area[i][j] = Area.WALL;
+            }
+        }
     }
 
     private List<Point> getPathsInRow(int rowIndex) {
@@ -78,18 +103,6 @@ public class Maze {
             }
         }
         return result;
-    }
-
-
-    public List<Point> solve(MazeVisitor visitor) {
-        checkState(getStatus().isValid(),"Maze is not valid. Please check getStatus()");
-        Stack<Point> path = new Stack<Point>();
-        solve(visitor, path, entrance());
-        System.out.println(Arrays.asList(path.toArray(new Point[path.size()])));
-        if(path.isEmpty() || !path.peek().equals(exit())) {
-            throw new IllegalStateException("Maze does not have an exist");
-        }
-        return Arrays.asList(path.toArray(new Point[path.size()]));
     }
 
     private void solve(MazeVisitor visitor, Stack<Point> path, Point lastPointVisited) {

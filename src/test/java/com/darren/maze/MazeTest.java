@@ -31,7 +31,7 @@ public class MazeTest {
 
     @Test
     public void testSolve() {
-        List<Point> path = createMaze().solve(new DummyMazeVistor());
+        List<Point> path = createMaze().solve();
         assertThat(path.get(path.size()-1), is(equalTo(new Point(7,8))));
     }
 
@@ -49,15 +49,5 @@ public class MazeTest {
         maze.makeRectanglePath(new Point(7, 1), new Point(7, 3));
         maze.makeRectanglePath(new Point(4, 3), new Point(4, 3));
         return maze;
-    }
-
-    private static class DummyMazeVistor implements MazeVisitor  {
-        public void enterPath(Point point) {
-            System.out.println("Entering " + point);
-        }
-
-        public void exitPath(Point point) {
-            System.out.println("Leaving " + point);
-        }
     }
 }
