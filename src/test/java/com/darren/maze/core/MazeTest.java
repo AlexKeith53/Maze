@@ -1,5 +1,7 @@
-package com.darren.maze;
+package com.darren.maze.core;
 
+import com.darren.maze.core.Maze;
+import com.darren.maze.core.Point;
 import org.junit.Test;
 
 import java.util.List;

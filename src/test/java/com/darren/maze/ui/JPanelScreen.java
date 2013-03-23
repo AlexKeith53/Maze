@@ -1,7 +1,7 @@
 package com.darren.maze.ui;
 
-import com.darren.maze.Maze;
-import com.darren.maze.Point;
+import com.darren.maze.core.Maze;
+import com.darren.maze.core.Point;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +18,7 @@ public class JPanelScreen extends JPanel implements Screen {
     private Maze maze;
     private int blockSize;
     private Configuration configuration;
-    private java.util.List<Point> solution = new ArrayList<Point>();
+    private List<Point> solutions = new ArrayList<Point>();
 
     public JPanelScreen(Maze maze, int blockSize, Configuration configuration) {
         mazeGraphicInterface = new MazeGraphicInterface(maze, this, blockSize);
@@ -32,19 +32,34 @@ public class JPanelScreen extends JPanel implements Screen {
         repaint();
     }
 
-    public void setSolution(List<Point> solution) {
-        this.solution = solution;
+
+    public void animateSolution(List<Point> solution) {
+        final Queue<Point> queue = new LinkedList<Point>(solution);
+        new Thread(new Runnable() {
+            public void run() {
+                while (!queue.isEmpty()) {
+                    try {
+                        solutions.clear();
+                        solutions.add(queue.poll());
+                        repaint();
+                        Thread.sleep(50);
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            }
+        }).start();
     }
 
     private Color getColor(Maze.Area area) {
-        if(area == Maze.Area.PATH) {
-            return  Color.WHITE;
+        if (area == Maze.Area.PATH) {
+            return Color.WHITE;
         }
-        return new Color(148,147,163);
+        return new Color(148, 147, 163);
     }
 
     private void initialize(int width, int height) {
-        setPreferredSize(new Dimension(width,height));
+        setPreferredSize(new Dimension(width, height));
         setBackground(Color.WHITE);
         addListeners();
     }
@@ -75,9 +90,9 @@ public class JPanelScreen extends JPanel implements Screen {
 
     private void drawPath(Graphics g) {
         g.setColor(getColor(Maze.Area.PATH));
-        for(int i = 0; i < maze.getWidth(); i++) {
-            for(int j = 0; j < maze.getHeight(); j++) {
-                if(maze.getArea(i,j) == Maze.Area.PATH) {
+        for (int i = 0; i < maze.getWidth(); i++) {
+            for (int j = 0; j < maze.getHeight(); j++) {
+                if (maze.getArea(i, j) == Maze.Area.PATH) {
                     drawBlock(g, new Point(i, j));
                 }
             }
@@ -91,21 +106,10 @@ public class JPanelScreen extends JPanel implements Screen {
     }
 
     private void showSolution(Graphics g) {
-        Point lastPoint;
-        for(Point point: solution) {
-            lastPoint = point.multiply(blockSize);
+        for(Point point: solutions) {
+            Point lastPoint = point.multiply(blockSize);
             g.setColor(Color.black);
-            System.out.println(point);
             g.fillOval(lastPoint.getX(), lastPoint.getY(), blockSize, blockSize);
-            try {
-                //Thread.sleep(50);
-                //g.setColor(getColor(Maze.Area.PATH));
-                //g.fillOval(lastPoint.getX(), lastPoint.getY(), blockSize/2, blockSize/2);
-            } catch (Exception ex) {
-                throw new RuntimeException(ex);
-            }
-
-
         }
     }
 

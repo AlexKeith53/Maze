@@ -1,6 +1,6 @@
 package com.darren.maze.ui;
 
-import com.darren.maze.Maze;
+import com.darren.maze.core.Maze;
 
 import javax.swing.*;
 import java.awt.*;
@@ -58,8 +58,7 @@ public class SwingMaze extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if(maze.getStatus().isValid()) {
                     System.out.println(maze.solve());
-                    panelScreen.setSolution(maze.solve());
-                    panelScreen.repaint();
+                    panelScreen.animateSolution(maze.solve());
                 } else {
                     System.out.println(maze.getStatus().getMessage());
                 }

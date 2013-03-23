@@ -1,7 +1,7 @@
 package com.darren.maze.ui;
 
-import com.darren.maze.Maze;
-import com.darren.maze.Point;
+import com.darren.maze.core.Maze;
+import com.darren.maze.core.Point;
 
 /**
  */

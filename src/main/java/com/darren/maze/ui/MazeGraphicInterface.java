@@ -1,7 +1,7 @@
 package com.darren.maze.ui;
 
-import com.darren.maze.Maze;
-import com.darren.maze.Point;
+import com.darren.maze.core.Maze;
+import com.darren.maze.core.Point;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -17,7 +17,7 @@ public class MazeGraphicInterface {
         this.maze = checkNotNull(maze);
         this.screen = checkNotNull(screen);
         this.blockSize = blockSize;
-        checkArgument(blockSize> 0, "Block size must be greater than 0");
+        checkArgument(blockSize > 0, "Block size must be greater than 0");
     }
 
     public void mouseClick(Point pointOnTheScreen, Maze.Area area) {

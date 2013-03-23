@@ -1,4 +1,4 @@
-package com.darren.maze;
+package com.darren.maze.core;
 
 import com.google.common.annotations.VisibleForTesting;
 
