@@ -21,6 +21,7 @@ public class SwingMaze extends JFrame {
     private JRadioButton wall = new JRadioButton("Wall");
     private ButtonGroup group = new ButtonGroup();
     private JButton solve = new JButton("Solve");
+    private JButton animateSolution = new JButton("Animate Logic");
     private File currentFile;
 
     private JMenuBar menuBar = new JMenuBar();
@@ -31,7 +32,9 @@ public class SwingMaze extends JFrame {
     private JMenuItem open = new JMenuItem("Open");
     JFileChooser fileChooser = new JFileChooser();
 
-    public SwingMaze() throws HeadlessException {
+    public SwingMaze(File file) throws HeadlessException {
+        currentFile = file;
+        loadMaze();
         setJMenuBar(menuBar);
         menuBar.add(menu);
         menu.add(newItem);
@@ -53,7 +56,9 @@ public class SwingMaze extends JFrame {
         content.add(path);
         content.add(wall);
         content.add(solve);
+        content.add(animateSolution);
         solve.addActionListener(solveActionListener());
+        animateSolution.addActionListener(animatedSolutionActionListener());
         content.add(panelScreen);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         content.setPreferredSize(new Dimension(530, 550));
@@ -61,10 +66,14 @@ public class SwingMaze extends JFrame {
         pack();
     }
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new SwingMaze().setVisible(true);
+                File file = null;
+                if(args.length > 0) {
+                    file = new File(args[0]);
+                }
+                new SwingMaze(file).setVisible(true);
             }
         });
     }
@@ -97,16 +106,24 @@ public class SwingMaze extends JFrame {
                 int returnValue = fileChooser.showOpenDialog(panelScreen);
                 if(returnValue == JFileChooser.APPROVE_OPTION) {
                     currentFile = fileChooser.getSelectedFile();
-                    try {
-                        Maze newMaze = new MazeIO().readMaze(new FileInputStream(currentFile));
-                        maze.copyFrom(newMaze);
-                        panelScreen.repaint();
-                    } catch (Exception ex) {
-                        throw new RuntimeException(ex);
-                    }
+                    loadMaze();
                 }
             }
         };
+    }
+
+
+    private void loadMaze() {
+        if(currentFile == null) {
+            return;
+        }
+        try {
+            Maze newMaze = new MazeIO().readMaze(new FileInputStream(currentFile));
+            maze.copyFrom(newMaze);
+            panelScreen.repaint();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     private ActionListener saveAsActionListener() {
@@ -147,6 +164,19 @@ public class SwingMaze extends JFrame {
                 currentFile = null;
                 maze.copyFrom(new Maze(50, 50));
                 panelScreen.repaint();
+            }
+        };
+    }
+
+    private ActionListener animatedSolutionActionListener() {
+        return new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new Thread(new Runnable() {
+                    public void run() {
+                        maze.solve(new AnimatedSolutionVisitor(panelScreen));
+                    }
+                }).start();
+
             }
         };
     }

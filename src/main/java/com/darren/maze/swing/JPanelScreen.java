@@ -53,6 +53,10 @@ public class JPanelScreen extends JPanel implements Screen {
         }).start();
     }
 
+    public void setSolutions(List<Point> solutions) {
+        this.solutions = solutions;
+    }
+
     private Color getColor(Maze.Area area) {
         if (area == Maze.Area.PATH) {
             return Color.WHITE;
