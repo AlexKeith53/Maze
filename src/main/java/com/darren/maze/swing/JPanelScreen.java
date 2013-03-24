@@ -1,7 +1,9 @@
-package com.darren.maze.ui;
+package com.darren.maze.swing;
 
 import com.darren.maze.core.Maze;
 import com.darren.maze.core.Point;
+import com.darren.maze.ui.MazeGraphicInterface;
+import com.darren.maze.ui.Screen;
 
 import javax.swing.*;
 import java.awt.*;
@@ -67,14 +69,14 @@ public class JPanelScreen extends JPanel implements Screen {
     private void addListeners() {
         addMouseListener(new MouseAdapter() {
             public void mouseReleased(MouseEvent evt) {
-                mazeGraphicInterface.mouseClick(new Point(evt.getX(), evt.getY()), configuration.drawPath() ? Maze.Area.PATH : Maze.Area.WALL);
+                mazeGraphicInterface.mouseClick(new Point(evt.getX(), evt.getY()), configuration.drawArea());
             }
         });
 
         addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent evt) {
-                mazeGraphicInterface.mouseClick(new Point(evt.getX(), evt.getY()), configuration.drawPath() ? Maze.Area.PATH : Maze.Area.WALL);
+                mazeGraphicInterface.mouseClick(new Point(evt.getX(), evt.getY()), configuration.drawArea());
             }
         });
     }

@@ -70,6 +70,10 @@ public class Maze {
         return area[0].length;
     }
 
+
+    public void copyFrom(Maze maze) {
+        area = maze.area;
+    }
     public MazeStatus getStatus() {
         int entrance = getPathsInRow(0).size();
         int exists = getPathsInRow(area[0].length -1).size();
